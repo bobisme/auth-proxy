@@ -25,6 +25,10 @@ func userInfoForAuthorization(header string) []byte {
 }
 
 func ProxyHandler(ctx *fasthttp.RequestCtx) {
+	if header := ctx.Request.Header.Peek("X-Userinfo"); len(header) > 0 {
+		log.Warn().Bytes("uerInfoHeader", header).
+			Msg("client tried to pass X-UserInfo header")
+	}
 	ctx.Request.Header.Del("X-Userinfo")
 	authorization := string(ctx.Request.Header.Peek("Authorization"))
 	if userInfo := userInfoForAuthorization(authorization); userInfo != nil {
